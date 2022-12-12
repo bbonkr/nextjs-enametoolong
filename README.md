@@ -1,34 +1,89 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Repro
 
-## Getting Started
+### Common requirements:
 
-First, run the development server:
+1. Clone this repository
+2. install dependencies `npm install`
 
-```bash
-npm run dev
-# or
-yarn dev
+### Case of success
+
+1. Run build npm script `npm run build`
+
+```shell
+$ npm run build
+(omited)
+Route (pages)                                                                                         Size     First Load JS
+┌ ○ /                                                                                                 4.33 kB        77.5 kB
+├   └ css/ae0e3e027412e072.css                                                                        707 B
+├   /_app                                                                                             0 B            73.2 kB
+├ ○ /404                                                                                              181 B          73.4 kB
+├ λ /api/articles                                                                                     0 B            73.2 kB
+├ λ /api/hello                                                                                        0 B            73.2 kB
+├ ● /articles (ISR: 10 Seconds)                                                                       2.31 kB        75.5 kB
+└ ● /articles/[slug] (ISR: 10 Seconds) (379 ms)                                                       340 B          73.5 kB
+    ├ /articles/test
+    ├ /articles/test-2
+    └ /articles/ทําไมผู้ป่วยถึงเลือกเกาหลีใต้ในการรักษาโรคมะเร็งและมะเร็งชนิดที่พวกเขารักษาได้ดีกว่า
++ First Load JS shared by all                                                                         73.4 kB
+  ├ chunks/framework-8c5acb0054140387.js                                                              45.4 kB
+  ├ chunks/main-f2e125da23ccdc4a.js                                                                   26.7 kB
+  ├ chunks/pages/_app-3893aca8cac41098.js                                                             296 B
+  ├ chunks/webpack-8fa1640cc84ba8fe.js                                                                750 B
+  └ css/ab44ce7add5c3d11.css                                                                          247 B
+
+λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
+○  (Static)  automatically rendered as static HTML (uses no initial props)
+●  (SSG)     automatically generated as static HTML + JSON (uses getStaticProps)
+   (ISR)     incremental static regeneration (uses revalidate in getStaticProps)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Case of failure
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+1. Edit sampleFile.ts
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+```typescript
+// Build succeed
+// export const sampleFileUri = `https://raw.githubusercontent.com/bbonkr/nextjs-enametoolong/main/public/samples/case1.json`;
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+// Build failed
+export const sampleFileUri = `https://raw.githubusercontent.com/bbonkr/nextjs-enametoolong/main/public/samples/case2.json`;
+```
 
-## Learn More
+```shell
+$ npm run build
+> next13-enametoolong@0.1.0 build
+> next build
 
-To learn more about Next.js, take a look at the following resources:
+info  - Linting and checking validity of types
+info  - Creating an optimized production build
+info  - Compiled successfully
+info  - Collecting page data .(node:69993) ExperimentalWarning: The Fetch API is an experimental feature. This feature could change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+info  - Collecting page data
+[    ] info  - Generating static pages (0/8)(node:69991) ExperimentalWarning: The Fetch API is an experimental feature. This feature could change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:69992) ExperimentalWarning: The Fetch API is an experimental feature. This feature could change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:69999) ExperimentalWarning: The Fetch API is an experimental feature. This feature could change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:69998) ExperimentalWarning: The Fetch API is an experimental feature. This feature could change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Error occurred prerendering page "/articles/f48a093378588a19f5519a6b2474cc5601ad12d8b1774535175ad31321e0909dc3c24301ce961d33a1a37058e6cf5d5d7a54f08500b83d8a398ac0b2d542ce77a9f86cdb66943b30df278b9733a412049bfa651f6b3d8046ad8ab01bfa78825020e4919a10bee6acc039617564648d355251496379bd30ff60e1640f1411". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: ENAMETOOLONG: name too long, open '/Users/bbon/Repos/next13-enametoolong/.next/export/articles/f48a093378588a19f5519a6b2474cc5601ad12d8b1774535175ad31321e0909dc3c24301ce961d33a1a37058e6cf5d5d7a54f08500b83d8a398ac0b2d542ce77a9f86cdb66943b30df278b9733a412049bfa651f6b3d8046ad8ab01bfa78825020e4919a10bee6acc039617564648d355251496379bd30ff60e1640f1411.json'
+(node:69997) ExperimentalWarning: The Fetch API is an experimental feature. This feature could change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+info  - Generating static pages (8/8)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+> Build error occurred
+Error: Export encountered errors on following paths:
+	/articles/[slug]: /articles/f48a093378588a19f5519a6b2474cc5601ad12d8b1774535175ad31321e0909dc3c24301ce961d33a1a37058e6cf5d5d7a54f08500b83d8a398ac0b2d542ce77a9f86cdb66943b30df278b9733a412049bfa651f6b3d8046ad8ab01bfa78825020e4919a10bee6acc039617564648d355251496379bd30ff60e1640f1411
+    at /Users/bbon/Repos/next13-enametoolong/node_modules/next/dist/export/index.js:408:19
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Span.traceAsyncFn (/Users/bbon/Repos/next13-enametoolong/node_modules/next/dist/trace/trace.js:79:20)
+    at async /Users/bbon/Repos/next13-enametoolong/node_modules/next/dist/build/index.js:1342:21
+    at async Span.traceAsyncFn (/Users/bbon/Repos/next13-enametoolong/node_modules/next/dist/trace/trace.js:79:20)
+    at async /Users/bbon/Repos/next13-enametoolong/node_modules/next/dist/build/index.js:1202:17
+    at async Span.traceAsyncFn (/Users/bbon/Repos/next13-enametoolong/node_modules/next/dist/trace/trace.js:79:20)
+    at async Object.build [as default] (/Users/bbon/Repos/next13-enametoolong/node_modules/next/dist/build/index.js:65:29)
+```

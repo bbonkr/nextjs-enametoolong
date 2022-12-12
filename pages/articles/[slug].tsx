@@ -3,6 +3,7 @@
 
 import { GetStaticPaths, GetStaticProps } from "next";
 import { Article } from "../../models";
+import { sampleFileUri } from "../../sampleFile";
 
 // revalidation is enabled and a new request comes in
 export const getStaticProps: GetStaticProps = async (context) => {
@@ -13,10 +14,11 @@ export const getStaticProps: GetStaticProps = async (context) => {
     slugValue = slug;
   }
 
-  const res = await fetch(
-    `http://localhost:3000/api/articles?slug=${encodeURIComponent(slugValue)}`
-  );
-  const post: Article = await res.json();
+  const res = await fetch(sampleFileUri);
+  const posts: Article[] = await res.json();
+
+  const post = posts.find((x) => x.slug === slugValue);
+
   if (post) {
     return {
       props: {
@@ -38,7 +40,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 // It may be called again, on a serverless function, if
 // the path has not been generated.
 export const getStaticPaths: GetStaticPaths = async (context) => {
-  const res = await fetch(`http://localhost:3000/api/articles`);
+  const res = await fetch(sampleFileUri);
   const posts: Article[] = await res.json();
 
   // Get the paths we want to pre-render based on posts
