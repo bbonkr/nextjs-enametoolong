@@ -2,6 +2,7 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
 import { Article } from "../../models";
 import { sampleFileUri } from "../../sampleFile";
+import { lengthInUtf8Bytes } from "../../lib/lengthInUtf8Bytes";
 
 // revalidation is enabled and a new request comes in
 export const getStaticProps: GetStaticProps = async () => {
@@ -29,7 +30,7 @@ const ArticlesPage = ({ posts }: { posts: Article[] }) => {
           return (
             <li key={post.id}>
               <Link href={`/articles/${encodeURIComponent(post.slug)}`}>
-                {post.title}
+                {post.title} ({lengthInUtf8Bytes(post.title)} btyes)
               </Link>
             </li>
           );

@@ -4,6 +4,7 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import { Article } from "../../models";
 import { sampleFileUri } from "../../sampleFile";
+import { lengthInUtf8Bytes } from "../../lib/lengthInUtf8Bytes";
 
 // revalidation is enabled and a new request comes in
 export const getStaticProps: GetStaticProps = async (context) => {
@@ -57,7 +58,9 @@ export const getStaticPaths: GetStaticPaths = async (context) => {
 const ArticlesSlugPage = ({ post }: { post?: Article }) => {
   return (
     <div>
-      <h1>{post?.title}</h1>
+      <h1>
+        {post?.title} ({lengthInUtf8Bytes(post?.title ?? "")} bytes)
+      </h1>
       <p>{post?.slug}</p>
       <hr />
       <p>{post?.body}</p>
